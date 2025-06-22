@@ -19,8 +19,6 @@ use numpy::IntoPyArray;
 use numpy::{PyReadonlyArray1, PyReadonlyArray2, PyReadonlyArray3};
 use pyo3::prelude::*;
 use pyo3::IntoPyObjectExt;
-use qiskit_circuit::getenv_use_multiple_threads;
-use rayon::prelude::*;
 
 fn marginalize<T: std::ops::AddAssign + Copy>(
     counts: HashMap<String, T>,

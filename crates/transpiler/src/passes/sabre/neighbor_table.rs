@@ -15,7 +15,6 @@ use numpy::PyReadonlyArray2;
 use pyo3::prelude::*;
 use pyo3::types::PyList;
 use qiskit_circuit::getenv_use_multiple_threads;
-use rayon::prelude::*;
 use rustworkx_core::petgraph::prelude::*;
 use smallvec::SmallVec;
 

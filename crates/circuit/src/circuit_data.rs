@@ -1021,7 +1021,7 @@ impl CircuitData {
         for instruction in &self.data {
             *ops_count.entry(instruction.op.name()).or_insert(0) += 1;
         }
-        ops_count.par_sort_by(|_k1, v1, _k2, v2| v2.cmp(v1));
+        ops_count.sort_by(|_k1, v1, _k2, v2| v2.cmp(v1));
         ops_count
     }
 

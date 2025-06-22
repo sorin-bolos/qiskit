@@ -16,7 +16,6 @@ use numpy::PyReadonlyArray1;
 use pyo3::prelude::*;
 use pyo3::types::PyTuple;
 use pyo3::{create_exception, wrap_pyfunction};
-use rayon::prelude::*;
 use rustworkx_core::petgraph::prelude::*;
 use rustworkx_core::petgraph::visit::{EdgeRef, IntoEdgeReferences, IntoNodeReferences, NodeRef};
 use rustworkx_core::petgraph::EdgeType;
@@ -318,6 +317,46 @@ fn mapping_to_layout<Ty: EdgeType>(
         );
     }
     out_layout
+}
+
+fn map_free_qubits(
+    free_nodes: HashMap<NodeIndex, HashMap<String, usize>>,
+    mut partial_layout: HashMap<VirtualQubit, PhysicalQubit>,
+    reverse_im_graph_node_map: &[Option<Qubit>],
+    avg_error_map: &ErrorMap,
+    target: &Target,
+) -> Option<HashMap<VirtualQubit, PhysicalQubit>> {
+    if free_nodes.is_empty() {
+        return Some(partial_layout);
+    }
+    let num_physical_qubits = target.num_qubits.unwrap() as u32;
+    let mut free_qubits_set: HashSet<u32> = (0..num_physical_qubits).collect();
+    for phys in partial_layout.values() {
+        let qubit = phys.index() as u32;
+        free_qubits_set.remove(&qubit);
+    }
+    let mut free_qubits: Vec<u32> = free_qubits_set.into_iter().collect();
+    free_qubits.sort_by(|qubit_a, qubit_b| {
+        let score_a = *avg_error_map
+            .error_map
+            .get(&[PhysicalQubit::new(*qubit_a), PhysicalQubit::new(*qubit_a)])
+            .unwrap_or(&0.);
+        let score_b = *avg_error_map
+            .error_map
+            .get(&[PhysicalQubit::new(*qubit_b), PhysicalQubit::new(*qubit_b)])
+            .unwrap_or(&0.);
+        score_b.partial_cmp(&score_a).unwrap()
+    });
+    let mut free_indices: Vec<NodeIndex> = free_nodes.keys().copied().collect();
+    free_indices.sort_by_key(|index| free_nodes[index].values().sum::<usize>());
+    for im_index in free_indices {
+        let selected_qubit = free_qubits.pop()?;
+        partial_layout.insert(
+            VirtualQubit(reverse_im_graph_node_map[im_index.index()].unwrap().0),
+            PhysicalQubit::new(selected_qubit),
+        );
+    }
+    Some(partial_layout)
 }
 
 #[pyfunction]

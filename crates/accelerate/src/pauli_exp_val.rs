@@ -16,7 +16,6 @@ use pulp::Simd;
 use pyo3::exceptions::PyOverflowError;
 use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
-use rayon::prelude::*;
 
 use qiskit_circuit::util::c64;
 
