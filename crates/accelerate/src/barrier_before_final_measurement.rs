@@ -112,17 +112,10 @@ pub fn barrier_before_final_measurements(
     };
 
     let final_ops: Vec<NodeIndex> =
-        if dag.num_qubits() >= PARALLEL_THRESHOLD && crate::getenv_use_multiple_threads() {
-            dag.qubit_io_map()
-                .par_iter()
-                .flat_map(find_final_nodes)
-                .collect()
-        } else {
-            dag.qubit_io_map()
-                .iter()
-                .flat_map(find_final_nodes)
-                .collect()
-        };
+        dag.qubit_io_map()
+            .iter()
+            .flat_map(find_final_nodes)
+            .collect()
 
     if final_ops.is_empty() {
         return Ok(());

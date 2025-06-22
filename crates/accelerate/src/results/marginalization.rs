@@ -11,7 +11,6 @@
 // that they have been altered from the originals.
 
 use super::converters::hex_to_bin;
-use crate::getenv_use_multiple_threads;
 use hashbrown::HashMap;
 use ndarray::prelude::*;
 use num_bigint::BigUint;
@@ -129,7 +128,6 @@ pub fn marginal_memory(
     return_hex: bool,
     parallel_threshold: usize,
 ) -> PyResult<PyObject> {
-    let run_in_parallel = getenv_use_multiple_threads();
     let first_elem = memory.first();
     if first_elem.is_none() {
         let res: Vec<String> = Vec::new();
@@ -138,31 +136,16 @@ pub fn marginal_memory(
 
     let clbit_size = hex_to_bin(first_elem.unwrap()).len();
 
-    let out_mem: Vec<String> = if memory.len() < parallel_threshold || !run_in_parallel {
-        memory
-            .iter()
-            .map(|x| map_memory(x, &indices, clbit_size, return_hex))
-            .collect()
-    } else {
-        memory
-            .par_iter()
-            .map(|x| map_memory(x, &indices, clbit_size, return_hex))
-            .collect()
-    };
+    let out_mem: Vec<String> = memory
+                                .iter()
+                                .map(|x| map_memory(x, &indices, clbit_size, return_hex))
+                                .collect();
     if return_int {
-        if out_mem.len() < parallel_threshold || !run_in_parallel {
-            Ok(out_mem
-                .iter()
-                .map(|x| BigUint::parse_bytes(x.as_bytes(), 2).unwrap())
-                .collect::<Vec<BigUint>>()
-                .into_py_any(py)?)
-        } else {
-            Ok(out_mem
-                .par_iter()
-                .map(|x| BigUint::parse_bytes(x.as_bytes(), 2).unwrap())
-                .collect::<Vec<BigUint>>()
-                .into_py_any(py)?)
-        }
+        Ok(out_mem
+            .iter()
+            .map(|x| BigUint::parse_bytes(x.as_bytes(), 2).unwrap())
+            .collect::<Vec<BigUint>>()
+            .into_py_any(py)?)
     } else {
         out_mem.into_py_any(py)
     }

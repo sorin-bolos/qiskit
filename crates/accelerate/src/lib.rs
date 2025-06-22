@@ -63,15 +63,7 @@ mod unitary_compose;
 
 #[inline]
 pub fn getenv_use_multiple_threads() -> bool {
-    let parallel_context = env::var("QISKIT_IN_PARALLEL")
-        .unwrap_or_else(|_| "FALSE".to_string())
-        .to_uppercase()
-        == "TRUE";
-    let force_threads = env::var("QISKIT_FORCE_THREADS")
-        .unwrap_or_else(|_| "FALSE".to_string())
-        .to_uppercase()
-        == "TRUE";
-    !parallel_context || force_threads
+    false
 }
 
 import_exception!(qiskit.exceptions, QiskitError);

@@ -21,7 +21,6 @@ use rand::prelude::*;
 use rand_pcg::Pcg64Mcg;
 use rayon::prelude::*;
 
-use crate::getenv_use_multiple_threads;
 use crate::nlayout::{NLayout, PhysicalQubit};
 
 use super::heuristic::Heuristic;
@@ -47,7 +46,6 @@ pub fn sabre_layout_and_routing(
     seed: Option<u64>,
     mut partial_layouts: Vec<Vec<Option<u32>>>,
 ) -> (NLayout, PyObject, (SwapMap, PyObject, NodeBlockResults)) {
-    let run_in_parallel = getenv_use_multiple_threads();
     let target = RoutingTargetView {
         neighbors: neighbor_table,
         coupling: &neighbor_table.coupling_graph(),
@@ -60,7 +58,7 @@ pub fn sabre_layout_and_routing(
     starting_layouts.push(compute_dense_starting_layout(
         dag.num_qubits,
         &target,
-        run_in_parallel,
+        false,
     ));
     starting_layouts.push(
         (0..target.neighbors.num_qubits() as u32)
@@ -134,35 +132,7 @@ pub fn sabre_layout_and_routing(
         .sample_iter(&rand::distr::StandardUniform)
         .take(starting_layouts.len())
         .collect();
-    let res = if run_in_parallel && starting_layouts.len() > 1 {
-        seed_vec
-            .into_par_iter()
-            .enumerate()
-            .map(|(index, seed_trial)| {
-                (
-                    index,
-                    layout_trial(
-                        &target,
-                        dag,
-                        heuristic,
-                        seed_trial,
-                        max_iterations,
-                        num_swap_trials,
-                        run_in_parallel,
-                        &starting_layouts[index],
-                    ),
-                )
-            })
-            .min_by_key(|(index, (_, _, result))| {
-                (
-                    result.map.map.values().map(|x| x.len()).sum::<usize>(),
-                    *index,
-                )
-            })
-            .unwrap()
-            .1
-    } else {
-        seed_vec
+    let res = seed_vec
             .into_iter()
             .enumerate()
             .map(|(index, seed_trial)| {
@@ -173,13 +143,12 @@ pub fn sabre_layout_and_routing(
                     seed_trial,
                     max_iterations,
                     num_swap_trials,
-                    run_in_parallel,
+                    false,
                     &starting_layouts[index],
                 )
             })
             .min_by_key(|(_, _, result)| result.map.map.values().map(|x| x.len()).sum::<usize>())
-            .unwrap()
-    };
+            .unwrap();
     (
         res.0,
         PyArray::from_vec(py, res.1).into_any().unbind(),

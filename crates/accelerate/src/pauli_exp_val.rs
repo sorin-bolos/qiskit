@@ -18,7 +18,6 @@ use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
 use rayon::prelude::*;
 
-use crate::getenv_use_multiple_threads;
 use qiskit_circuit::util::c64;
 
 const PARALLEL_THRESHOLD: usize = 19;
@@ -48,7 +47,6 @@ pub fn expval_pauli_no_x(
     }
     let data_arr = data.as_slice()?;
     let size = 1_usize << num_qubits;
-    let run_in_parallel = getenv_use_multiple_threads();
     let map_fn = |i: usize| -> f64 {
         let mut val: f64 = data_arr[i].re * data_arr[i].re + data_arr[i].im * data_arr[i].im;
         if (i & z_mask).count_ones() & 1 != 0 {
@@ -57,11 +55,7 @@ pub fn expval_pauli_no_x(
         val
     };
 
-    if num_qubits < PARALLEL_THRESHOLD || !run_in_parallel {
-        Ok(fast_sum(&(0..size).map(map_fn).collect::<Vec<f64>>()))
-    } else {
-        Ok((0..size).into_par_iter().map(map_fn).sum())
-    }
+    Ok(fast_sum(&(0..size).map(map_fn).collect::<Vec<f64>>()))
 }
 
 /// Compute the pauli expectation value of a statevector with x
@@ -84,7 +78,6 @@ pub fn expval_pauli_with_x(
     let mask_u = !(2_usize.pow(x_max + 1) - 1);
     let mask_l = 2_usize.pow(x_max) - 1;
     let size = 1_usize << (num_qubits - 1);
-    let run_in_parallel = getenv_use_multiple_threads();
     let map_fn = |i: usize| -> f64 {
         let index_0 = ((i << 1) & mask_u) | (i & mask_l);
         let index_1 = index_0 ^ x_mask;
@@ -115,11 +108,7 @@ pub fn expval_pauli_with_x(
         }
         val
     };
-    if num_qubits < PARALLEL_THRESHOLD || !run_in_parallel {
-        Ok(fast_sum(&(0..size).map(map_fn).collect::<Vec<f64>>()))
-    } else {
-        Ok((0..size).into_par_iter().map(map_fn).sum())
-    }
+    Ok(fast_sum(&(0..size).map(map_fn).collect::<Vec<f64>>()))
 }
 
 /// Compute the pauli expectation value of a density matrix without x
@@ -138,7 +127,6 @@ pub fn density_expval_pauli_no_x(
     let data_arr = data.as_slice()?;
     let num_rows = 1_usize << num_qubits;
     let stride = 1 + num_rows;
-    let run_in_parallel = getenv_use_multiple_threads();
     let map_fn = |i: usize| -> f64 {
         let index = i * stride;
         let mut val = data_arr[index].re;
@@ -147,11 +135,7 @@ pub fn density_expval_pauli_no_x(
         }
         val
     };
-    if num_qubits < PARALLEL_THRESHOLD || !run_in_parallel {
-        Ok(fast_sum(&(0..num_rows).map(map_fn).collect::<Vec<f64>>()))
-    } else {
-        Ok((0..num_rows).into_par_iter().map(map_fn).sum())
-    }
+    Ok(fast_sum(&(0..num_rows).map(map_fn).collect::<Vec<f64>>()))
 }
 
 /// Compute the pauli expectation value of a density matrix with x
@@ -174,7 +158,6 @@ pub fn density_expval_pauli_with_x(
     let mask_u = !(2_usize.pow(x_max + 1) - 1);
     let mask_l = 2_usize.pow(x_max) - 1;
     let num_rows = 1_usize << num_qubits;
-    let run_in_parallel = getenv_use_multiple_threads();
     let map_fn = |i: usize| -> f64 {
         let index_vec = ((i << 1) & mask_u) | (i & mask_l);
         let index_mat = (index_vec ^ x_mask) + num_rows * index_vec;
@@ -184,13 +167,9 @@ pub fn density_expval_pauli_with_x(
         }
         val
     };
-    if num_qubits < PARALLEL_THRESHOLD || !run_in_parallel {
-        Ok(fast_sum(
-            &(0..num_rows >> 1).map(map_fn).collect::<Vec<f64>>(),
-        ))
-    } else {
-        Ok((0..num_rows >> 1).into_par_iter().map(map_fn).sum())
-    }
+    Ok(fast_sum(
+        &(0..num_rows >> 1).map(map_fn).collect::<Vec<f64>>(),
+    ))
 }
 
 pub fn pauli_expval(m: &Bound<PyModule>) -> PyResult<()> {

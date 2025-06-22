@@ -29,7 +29,6 @@ use rustworkx_core::shortest_path::dijkstra;
 use rustworkx_core::token_swapper::token_swapper;
 use smallvec::{smallvec, SmallVec};
 
-use crate::getenv_use_multiple_threads;
 use crate::nlayout::{NLayout, PhysicalQubit};
 
 use super::heuristic::{BasicHeuristic, DecayHeuristic, Heuristic, LookaheadHeuristic, SetScaling};
@@ -498,7 +497,7 @@ pub fn swap_map(
 ) -> (SabreResult, NLayout) {
     let run_in_parallel = match run_in_parallel {
         Some(run_in_parallel) => run_in_parallel,
-        None => getenv_use_multiple_threads() && num_trials > 1,
+        None => false,
     };
     let outer_rng = match seed {
         Some(seed) => Pcg64Mcg::seed_from_u64(seed),

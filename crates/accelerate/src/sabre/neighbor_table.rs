@@ -10,7 +10,6 @@
 // copyright notice, and modified files need to carry a notice indicating
 // that they have been altered from the originals.
 
-use crate::getenv_use_multiple_threads;
 use ndarray::prelude::*;
 use numpy::PyReadonlyArray2;
 use pyo3::prelude::*;
@@ -69,7 +68,6 @@ impl NeighborTable {
     #[new]
     #[pyo3(signature = (adjacency_matrix=None))]
     pub fn new(adjacency_matrix: Option<PyReadonlyArray2<f64>>) -> PyResult<Self> {
-        let run_in_parallel = getenv_use_multiple_threads();
         let neighbors = match adjacency_matrix {
             Some(adjacency_matrix) => {
                 let adj_mat = adjacency_matrix.as_array();
@@ -89,18 +87,10 @@ impl NeighborTable {
                             })
                             .collect()
                     };
-                if run_in_parallel {
-                    adj_mat
-                        .axis_iter(Axis(0))
-                        .into_par_iter()
-                        .map(build_neighbors)
-                        .collect::<PyResult<_>>()?
-                } else {
-                    adj_mat
-                        .axis_iter(Axis(0))
-                        .map(build_neighbors)
-                        .collect::<PyResult<_>>()?
-                }
+                adj_mat
+                    .axis_iter(Axis(0))
+                    .map(build_neighbors)
+                    .collect::<PyResult<_>>()?
             }
             None => Vec::new(),
         };
