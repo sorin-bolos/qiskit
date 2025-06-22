@@ -21,7 +21,6 @@ import collections.abc
 import copy as _copy
 
 import itertools
-import multiprocessing
 import typing
 from collections import OrderedDict
 from typing import (
@@ -1590,11 +1589,7 @@ class QuantumCircuit:
 
     def _name_update(self) -> None:
         """update name of instance using instance number"""
-        if multiprocessing.parent_process() is None:
-            pid_name = ""
-        else:
-            pid_name = f"-{multiprocessing.current_process().pid}"
-        self.name = f"{self._base_name}-{self._cls_instances()}{pid_name}"
+        self.name = f"{self._base_name}-{self._cls_instances()}"
 
     def has_register(self, register: Register) -> bool:
         """

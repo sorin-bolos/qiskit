@@ -14,7 +14,6 @@
 """Utility script to verify qiskit copyright file headers"""
 
 import argparse
-import multiprocessing
 import subprocess
 import sys
 import re
@@ -44,8 +43,7 @@ def _main():
     parser = argparse.ArgumentParser(description="Find any stray release notes.")
     _args = parser.parse_args()
     files = discover_files()
-    with multiprocessing.Pool() as pool:
-        res = pool.map(validate_path, files)
+    res = [validate_path(file) for file in files]
     failed_files = [x for x in res if x is not None]
     if len(failed_files) > 0:
         for failed_file in failed_files:

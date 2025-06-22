@@ -16,7 +16,6 @@
 """Utility script to verify qiskit copyright file headers"""
 
 import argparse
-import multiprocessing
 import os
 import sys
 import re
@@ -116,8 +115,7 @@ def _main():
     )
     args = parser.parse_args()
     files = discover_files(args.paths)
-    with multiprocessing.Pool() as pool:
-        res = pool.map(validate_header, files)
+    res = [validate_header(file) for file in files]
     failed_files = [x for x in res if x[1] is False]
     if len(failed_files) > 0:
         for failed_file in failed_files:

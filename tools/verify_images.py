@@ -15,7 +15,6 @@
 """Utility script to verify that all images have alt text"""
 
 from pathlib import Path
-import multiprocessing
 import sys
 import glob
 
@@ -81,8 +80,7 @@ def validate_image(file_path: str) -> tuple[str, list[str]]:
 def _main() -> None:
     files = glob.glob("qiskit/**/*.py", recursive=True)
 
-    with multiprocessing.Pool() as pool:
-        results = pool.map(validate_image, files)
+    results = [validate_image(file) for file in files]
 
     failed_files = {file: image_errors for file, image_errors in results if image_errors}
 
