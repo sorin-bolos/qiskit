@@ -170,12 +170,6 @@ External Python Libraries
     `SQSnobFit <https://pypi.org/project/SQSnobFit/>`__ is a library for the "stable noisy
     optimization by branch and fit" algorithm.  It is used by the :class:`.SNOBFIT` optimizer.
 
-.. py:data:: HAS_SYMENGINE
-
-    `Symengine <https://github.com/symengine/symengine>`__ is a fast C++ backend for the
-    symbolic-manipulation library `Sympy <https://www.sympy.org/en/index.html>`__.  This
-    dependency is used to load legacy QPY formats, where this package was used to handle
-    :class:`~.circuit.Parameter`\\ s.
 
 .. py:data:: HAS_SYMPY
 
@@ -330,7 +324,6 @@ HAS_SKQUANT = _LazyImportTester(
     install="pip install scikit-quant",
 )
 HAS_SQSNOBFIT = _LazyImportTester("SQSnobFit", install="pip install SQSnobFit")
-HAS_SYMENGINE = _LazyImportTester("symengine", install="pip install symengine<0.14")
 HAS_SYMPY = _LazyImportTester("sympy", install="pip install sympy")
 HAS_TESTTOOLS = _LazyImportTester("testtools", install="pip install testtools")
 HAS_TWEEDLEDUM = _LazyImportTester("tweedledum", install="pip install tweedledum")

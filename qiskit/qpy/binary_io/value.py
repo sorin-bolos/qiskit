@@ -520,10 +520,7 @@ def _read_parameter_expression_v3(file_obj, vectors, use_symengine):
     )
 
     payload = file_obj.read(data.expr_size)
-    if use_symengine:
-        expr_ = common.load_symengine_payload(payload)
-    else:
-        sympy_str = payload.decode(common.ENCODE)
+    sympy_str = payload.decode(common.ENCODE)
         expr_ = parse_sympy_repr(sympy_str)
 
     symbol_map = {}

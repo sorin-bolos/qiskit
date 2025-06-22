@@ -19,7 +19,6 @@ import io
 import struct
 import uuid
 
-from qiskit.utils.optionals import HAS_SYMENGINE
 
 from qiskit.qpy import formats, exceptions
 
@@ -316,46 +315,6 @@ def mapping_from_binary(binary_data, deserializer, **kwargs):
     return mapping
 
 
-@HAS_SYMENGINE.require_in_call("QPY versions 10 through 12 with symengine parameter serialization")
 def load_symengine_payload(payload: bytes):
-    """Load a symengine expression from it's serialized cereal payload."""
-    # This is a horrible hack to workaround the symengine version checking
-    # it's deserialization does. There were no changes to the serialization
-    # format between 0.11 and 0.13 but the deserializer checks that it can't
-    # load across a major or minor version boundary. This works around it
-    # by just lying about the generating version.
-    import symengine
-    from symengine.lib.symengine_wrapper import (  # pylint: disable = no-name-in-module
-        load_basic,
-    )
-
-    symengine_version = symengine.__version__.split(".")
-    major = payload[2]
-    minor = payload[3]
-    if int(symengine_version[1]) != minor:
-        if major != 0:
-            raise exceptions.QpyError(
-                "Qiskit doesn't support loading a symengine payload generated with symengine >= 1.0"
-            )
-        if minor == 9:
-            raise exceptions.QpyError(
-                "Qiskit doesn't support loading a historical QPY file with `use_symengine=True` "
-                "generated in an environment using symengine 0.9.0. If you need to load this file "
-                "you can do so with Qiskit 0.45.x or 0.46.x and re-export the QPY file using "
-                "`use_symengine=False`."
-            )
-        if minor not in (11, 13):
-            raise exceptions.QpyError(
-                f"Incompatible symengine version {major}.{minor} used to generate the QPY "
-                "payload"
-            )
-        minor_version = int(symengine_version[1])
-        if minor_version not in (11, 13):
-            raise exceptions.QpyError(
-                f"Incompatible installed symengine version {symengine.__version__} to load "
-                "this QPY payload"
-            )
-        payload = bytearray(payload)
-        payload[3] = minor_version
-        payload = bytes(payload)
-    return load_basic(payload)
+    """Symengine support has been removed."""
+    raise exceptions.QpyError("Symengine payloads are no longer supported")
