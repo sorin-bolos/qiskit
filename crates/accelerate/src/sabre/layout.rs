@@ -19,7 +19,6 @@ use ndarray::prelude::*;
 use numpy::{IntoPyArray, PyArray, PyReadonlyArray2};
 use rand::prelude::*;
 use rand_pcg::Pcg64Mcg;
-use rayon::prelude::*;
 
 use crate::nlayout::{NLayout, PhysicalQubit};
 

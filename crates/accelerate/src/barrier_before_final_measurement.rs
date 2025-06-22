@@ -11,7 +11,6 @@
 // that they have been altered from the originals.
 
 use pyo3::prelude::*;
-use rayon::prelude::*;
 use rustworkx_core::petgraph::stable_graph::NodeIndex;
 
 use qiskit_circuit::dag_circuit::{DAGCircuit, NodeType};
@@ -115,7 +114,7 @@ pub fn barrier_before_final_measurements(
         dag.qubit_io_map()
             .iter()
             .flat_map(find_final_nodes)
-            .collect()
+            .collect();
 
     if final_ops.is_empty() {
         return Ok(());

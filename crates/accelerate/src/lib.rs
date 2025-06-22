@@ -55,8 +55,6 @@ pub mod two_qubit_decompose;
 pub mod uc_gate;
 pub mod unitary_synthesis;
 pub mod vf2_layout;
-
-mod rayon_ext;
 #[cfg(test)]
 mod test;
 mod unitary_compose;

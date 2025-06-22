@@ -13,7 +13,6 @@ doctest = false
 workspace = true
 
 [dependencies]
-rayon.workspace = true
 numpy.workspace = true
 rand = "0.9"
 rand_pcg = "0.9"
@@ -42,7 +41,7 @@ features = ["hashbrown", "indexmap", "num-complex", "num-bigint", "smallvec"]
 
 [dependencies.ndarray]
 workspace = true
-features = ["rayon", "approx"]
+features = ["approx"]
 
 [dependencies.approx]
 workspace = true
@@ -50,11 +49,9 @@ features = ["num-complex"]
 
 [dependencies.hashbrown]
 workspace = true
-features = ["rayon"]
 
 [dependencies.indexmap]
 workspace = true
-features = ["rayon"]
 
 [dependencies.faer-ext]
 version = "0.3.0"
@@ -66,6 +63,7 @@ features = ["macro"]
 
 [dev-dependencies]
 pyo3 = { workspace = true, features = ["auto-initialize"] }
+rayon = "1.10"
 
 [features]
 cache_pygates = ["qiskit-circuit/cache_pygates"]

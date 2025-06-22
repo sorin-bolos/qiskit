@@ -19,7 +19,6 @@ use num_complex::{Complex64, ComplexFloat};
 use rand::prelude::*;
 use rand_distr::StandardNormal;
 use rand_pcg::Pcg64Mcg;
-use rayon::prelude::*;
 
 use qiskit_circuit::circuit_data::CircuitData;
 use qiskit_circuit::operations::{ArrayType, Param, UnitaryGate};
