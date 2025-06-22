@@ -315,47 +315,6 @@ fn mapping_to_layout<Ty: EdgeType>(
     out_layout
 }
 
-fn map_free_qubits(
-    free_nodes: HashMap<NodeIndex, HashMap<String, usize>>,
-    mut partial_layout: HashMap<VirtualQubit, PhysicalQubit>,
-    reverse_im_graph_node_map: &[Option<Qubit>],
-    avg_error_map: &ErrorMap,
-    target: &Target,
-) -> Option<HashMap<VirtualQubit, PhysicalQubit>> {
-    if free_nodes.is_empty() {
-        return Some(partial_layout);
-    }
-    let num_physical_qubits = target.num_qubits.unwrap() as u32;
-    let mut free_qubits_set: HashSet<u32> = (0..num_physical_qubits).collect();
-    for phys in partial_layout.values() {
-        let qubit = phys.index() as u32;
-        free_qubits_set.remove(&qubit);
-    }
-    let mut free_qubits: Vec<u32> = free_qubits_set.into_iter().collect();
-    free_qubits.par_sort_by(|qubit_a, qubit_b| {
-        let score_a = *avg_error_map
-            .error_map
-            .get(&[PhysicalQubit::new(*qubit_a), PhysicalQubit::new(*qubit_a)])
-            .unwrap_or(&0.);
-        let score_b = *avg_error_map
-            .error_map
-            .get(&[PhysicalQubit::new(*qubit_b), PhysicalQubit::new(*qubit_b)])
-            .unwrap_or(&0.);
-        // Reverse comparison so lower error rates are at the end of the vec.
-        score_b.partial_cmp(&score_a).unwrap()
-    });
-    let mut free_indices: Vec<NodeIndex> = free_nodes.keys().copied().collect();
-    free_indices.par_sort_by_key(|index| free_nodes[index].values().sum::<usize>());
-    for im_index in free_indices {
-        let selected_qubit = free_qubits.pop()?;
-        partial_layout.insert(
-            VirtualQubit(reverse_im_graph_node_map[im_index.index()].unwrap().0),
-            PhysicalQubit::new(selected_qubit),
-        );
-    }
-    Some(partial_layout)
-}
-
 #[pyfunction]
 #[pyo3(signature = (dag, target, strict_direction=false, call_limit=None, time_limit=None, max_trials=None, avg_error_map=None))]
 pub fn vf2_layout_pass(
@@ -562,15 +521,14 @@ fn score_layout_internal<Ty: EdgeType>(
 /// Score a given circuit with a layout applied
 #[pyfunction]
 #[pyo3(
-    text_signature = "(bit_list, edge_list, error_matrix, layout, strict_direction, run_in_parallel, /)"
+    text_signature = "(bit_list, edge_list, error_matrix, layout, strict_direction, /)"
 )]
 pub fn score_layout(
     bit_list: PyReadonlyArray1<i32>,
     edge_list: &EdgeList,
     error_map: &ErrorMap,
     layout: &NLayout,
-    strict_direction: bool,
-    run_in_parallel: bool,
+    strict_direction: bool
 ) -> PyResult<f64> {
     let bit_counts = bit_list.as_slice()?;
     let edge_filter_map = |(index_arr, gate_count): &([VirtualQubit; 2], i32)| -> Option<f64> {
@@ -603,32 +561,16 @@ pub fn score_layout(
         })
     };
 
-    let mut fidelity: f64 = if edge_list.edge_list.len() < PARALLEL_THRESHOLD || !run_in_parallel {
-        edge_list
-            .edge_list
-            .iter()
-            .filter_map(edge_filter_map)
-            .product()
-    } else {
-        edge_list
-            .edge_list
-            .par_iter()
-            .filter_map(edge_filter_map)
-            .product()
-    };
-    fidelity *= if bit_list.len()? < PARALLEL_THRESHOLD || !run_in_parallel {
-        bit_counts
-            .iter()
-            .enumerate()
-            .filter_map(bit_filter_map)
-            .product::<f64>()
-    } else {
-        bit_counts
-            .par_iter()
-            .enumerate()
-            .filter_map(bit_filter_map)
-            .product()
-    };
+    let mut fidelity: f64 =  edge_list
+                                .edge_list
+                                .iter()
+                                .filter_map(edge_filter_map)
+                                .product();
+    fidelity *= bit_counts
+                .iter()
+                .enumerate()
+                .filter_map(bit_filter_map)
+                .product::<f64>();
     Ok(1. - fidelity)
 }
 
