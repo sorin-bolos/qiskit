@@ -23,7 +23,7 @@ import zlib
 from io import BytesIO
 
 import numpy as np
-import symengine as sym
+import sympy as sym
 
 from qiskit.exceptions import QiskitError
 from qiskit.qpy import formats, common, type_keys
@@ -91,14 +91,11 @@ def _loads_symbolic_expr(expr_bytes, use_symengine=False):
     if expr_bytes == b"":
         return None
     expr_bytes = zlib.decompress(expr_bytes)
-    if use_symengine:
-        return common.load_symengine_payload(expr_bytes)
-    else:
-        from sympy import parse_expr
+    from sympy import parse_expr
 
-        expr_txt = expr_bytes.decode(common.ENCODE)
-        expr = parse_expr(expr_txt)
-        return sym.sympify(expr)
+    expr_txt = expr_bytes.decode(common.ENCODE)
+    expr = parse_expr(expr_txt)
+    return sym.sympify(expr)
 
 
 def _read_symbolic_pulse(file_obj, version) -> None:
@@ -159,10 +156,10 @@ def _read_symbolic_pulse_v6(file_obj, version, use_symengine) -> None:
     )
     class_name = file_obj.read(header.class_name_size).decode(common.ENCODE)
     file_obj.read(header.type_size).decode(common.ENCODE)  # read pulse type
-    _loads_symbolic_expr(file_obj.read(header.envelope_size), use_symengine)  # read envelope
-    _loads_symbolic_expr(file_obj.read(header.constraints_size), use_symengine)  # read constraints
+    _loads_symbolic_expr(file_obj.read(header.envelope_size))  # read envelope
+    _loads_symbolic_expr(file_obj.read(header.constraints_size))  # read constraints
     _loads_symbolic_expr(
-        file_obj.read(header.valid_amp_conditions_size), use_symengine
+        file_obj.read(header.valid_amp_conditions_size)
     )  # read valid_amp_conditions
     # read parameters
     common.read_mapping(

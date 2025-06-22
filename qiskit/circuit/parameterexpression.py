@@ -23,7 +23,7 @@ import numbers
 import operator
 
 import numpy
-import symengine
+import sympy as symengine
 
 from qiskit.circuit.exceptions import CircuitError
 from qiskit.exceptions import QiskitError
