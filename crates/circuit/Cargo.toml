@@ -53,4 +53,3 @@ cache_pygates = []
 
 [dev-dependencies]
 pyo3 = { workspace = true, features = ["auto-initialize"] }
-rayon = "1.10"

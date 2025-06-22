@@ -34,7 +34,7 @@ class UserConfig:
     circuit_idle_wires = False
     transpile_optimization_level = 1
     parallel = False
-    num_processes = 4
+    num_processes = 1
     sabre_all_threads = true
 
     """
@@ -156,12 +156,12 @@ class UserConfig:
                 self.settings["transpile_optimization_level"] = transpile_optimization_level
 
             # Parse parallel
-            parallel_enabled = self.config_parser.getboolean("default", "parallel", fallback=None)
+            parallel_enabled = False
             if parallel_enabled is not None:
                 self.settings["parallel_enabled"] = parallel_enabled
 
             # Parse num_processes
-            num_processes = self.config_parser.getint("default", "num_processes", fallback=-1)
+            num_processes = 1
             if num_processes != -1:
                 if num_processes <= 0:
                     raise exceptions.QiskitUserConfigError(

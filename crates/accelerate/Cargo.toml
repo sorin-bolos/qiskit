@@ -63,7 +63,6 @@ features = ["macro"]
 
 [dev-dependencies]
 pyo3 = { workspace = true, features = ["auto-initialize"] }
-rayon = "1.10"
 
 [features]
 cache_pygates = ["qiskit-circuit/cache_pygates"]
