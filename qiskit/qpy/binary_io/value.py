@@ -20,7 +20,7 @@ import struct
 import uuid
 
 import numpy as np
-import symengine
+import sympy as symengine
 
 
 from qiskit.circuit import CASE_DEFAULT, Clbit, ClassicalRegister, Duration
@@ -512,11 +512,8 @@ def _read_parameter_expression_v3(file_obj, vectors, use_symengine):
     )
 
     payload = file_obj.read(data.expr_size)
-    if use_symengine:
-        expr_ = common.load_symengine_payload(payload)
-    else:
-        sympy_str = payload.decode(common.ENCODE)
-        expr_ = symengine.sympify(parse_sympy_repr(sympy_str))
+    sympy_str = payload.decode(common.ENCODE)
+    expr_ = symengine.sympify(parse_sympy_repr(sympy_str))
 
     symbol_map = {}
     for _ in range(data.map_elements):

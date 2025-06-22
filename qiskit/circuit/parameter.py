@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from uuid import uuid4, UUID
 
-import symengine
+import sympy as symengine
 
 from qiskit.circuit.exceptions import CircuitError
 
