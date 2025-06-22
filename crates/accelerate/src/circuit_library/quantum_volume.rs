@@ -132,18 +132,11 @@ pub fn quantum_volume(
         .take(num_unitaries)
         .collect();
 
-    let unitaries: Vec<Matrix4<Complex64>> = if getenv_use_multiple_threads() && num_unitaries > 200
-    {
-        seed_vec
-            .par_chunks(per_thread)
-            .flat_map_iter(|seeds| random_unitaries(seeds[0], seeds.len()))
-            .collect()
-    } else {
-        seed_vec
+    let unitaries: Vec<Matrix4<Complex64>> = seed_vec
             .chunks(per_thread)
             .flat_map(|seeds| random_unitaries(seeds[0], seeds.len()))
-            .collect()
-    };
+            .collect();
+
     CircuitData::from_packed_operations(
         py,
         num_qubits,

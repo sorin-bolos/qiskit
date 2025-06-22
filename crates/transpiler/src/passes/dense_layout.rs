@@ -23,8 +23,6 @@ use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
 use pyo3::Python;
 
-use qiskit_circuit::getenv_use_multiple_threads;
-
 struct SubsetResult {
     pub count: usize,
     pub error: f64,
@@ -222,17 +220,11 @@ pub fn best_subset(
         }
     };
 
-    let best_result = if getenv_use_multiple_threads() {
-        (0..coupling_shape[0])
-            .into_par_iter()
-            .map(map_fn)
-            .reduce(reduce_identity_fn, reduce_fn)
-    } else {
-        (0..coupling_shape[0])
-            .map(map_fn)
-            .reduce(reduce_fn)
-            .unwrap()
-    };
+    let best_result = (0..coupling_shape[0])
+                        .map(map_fn)
+                        .reduce(reduce_fn)
+                        .unwrap()
+            
     let best_map: Vec<usize> = best_result.map;
     let mapping: HashMap<usize, usize> = best_map
         .iter()
