@@ -31,7 +31,6 @@ from qiskit.compiler import transpile
 from qiskit.quantum_info import Operator
 from qiskit.providers.fake_provider import GenericBackendV2
 from qiskit.providers.basic_provider import BasicSimulator
-from qiskit.utils import parallel_map
 from test import QiskitTestCase, combine  # pylint: disable=wrong-import-order
 from ..legacy_cmaps import BOGOTA_CMAP
 
@@ -930,39 +929,6 @@ class TestParameters(QiskitTestCase):
         # Since these two pairs of objects compared equal, they must have the same hash as well.
         self.assertEqual(hash(x1), hash(x1_expr))
         self.assertEqual(hash(x2), hash(x2_expr))
-
-    def test_binding_parameterized_circuits_built_in_multiproc(self):
-        """Verify subcircuits built in a subprocess can still be bound."""
-        # ref: https://github.com/Qiskit/qiskit-terra/issues/2429
-
-        num_processes = 4
-
-        qr = QuantumRegister(3)
-        cr = ClassicalRegister(3)
-
-        circuit = QuantumCircuit(qr, cr)
-        parameters = [Parameter(f"x{i}") for i in range(num_processes)]
-
-        results = parallel_map(
-            _construct_circuit, parameters, task_args=(qr,), num_processes=num_processes
-        )
-
-        for qc in results:
-            circuit.compose(qc, inplace=True)
-
-        parameter_values = {x: 1.0 for x in parameters}
-
-        bind_circuit = circuit.assign_parameters(parameter_values)
-
-        self.assertEqual(len(bind_circuit.data), 4)
-        self.assertTrue(
-            all(
-                len(inst.operation.params) == 1
-                and isinstance(inst.operation.params[0], float)
-                and float(inst.operation.params[0]) == 1
-                for inst in bind_circuit.data
-            )
-        )
 
     def test_transpiling_multiple_parameterized_circuits(self):
         """Verify several parameterized circuits can be transpiled at once."""

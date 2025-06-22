@@ -313,8 +313,3 @@ def mapping_from_binary(binary_data, deserializer, **kwargs):
         mapping = read_mapping(container, deserializer, **kwargs)
 
     return mapping
-
-
-def load_symengine_payload(payload: bytes):
-    """Symengine support has been removed."""
-    raise exceptions.QpyError("Symengine payloads are no longer supported")
