@@ -11,8 +11,7 @@
 # that they have been altered from the originals.
 # pylint: disable=too-many-return-statements
 
-"""Check if number close to values of PI
-"""
+"""Check if number close to values of PI"""
 
 import numpy as np
 from qiskit.circuit.parameterexpression import ParameterExpression
@@ -49,9 +48,9 @@ def pi_check(inpt, eps=1e-9, output="text", ndigits=None):
     if isinstance(inpt, ParameterExpression):
         param_str = str(inpt)
         from sympy import sympify
-        import symengine
+        import sympy
 
-        if not isinstance(inpt._symbol_expr, symengine.Basic):
+        if not isinstance(inpt._symbol_expr, sympy.Basic):
             raise QiskitError("Invalid ParameterExpression provided")
         expr = sympify(inpt._symbol_expr)
         syms = expr.atoms()

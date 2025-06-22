@@ -23,7 +23,7 @@ import numbers
 import operator
 
 import numpy
-import symengine
+import sympy
 
 from qiskit.circuit.exceptions import CircuitError
 from qiskit.exceptions import QiskitError
@@ -162,7 +162,7 @@ class ParameterExpression:
         new_replay = self._qpy_replay.copy()
         new_replay.append(new_op)
         conjugated = ParameterExpression(
-            self._parameter_symbols, symengine.conjugate(self._symbol_expr), _qpy_replay=new_replay
+            self._parameter_symbols, sympy.conjugate(self._symbol_expr), _qpy_replay=new_replay
         )
         return conjugated
 
@@ -279,7 +279,7 @@ class ParameterExpression:
         new_parameter_symbols = {
             p: s for p, s in self._parameter_symbols.items() if p not in parameter_map
         }
-        symbol_type = symengine.Symbol
+        symbol_type = sympy.Symbol
 
         # If new_param is an expr, we'll need to construct a matching sympy expr
         # but with our sympy symbols instead of theirs.
@@ -422,7 +422,7 @@ class ParameterExpression:
 
         # Compute the gradient of the parameter expression w.r.t. param
         key = self._parameter_symbols[param]
-        expr_grad = symengine.Derivative(self._symbol_expr, key)
+        expr_grad = sympy.Derivative(self._symbol_expr, key)
 
         # generate the new dictionary of symbols
         # this needs to be done since in the derivative some symbols might disappear (e.g.
@@ -492,39 +492,39 @@ class ParameterExpression:
 
     def sin(self):
         """Sine of a ParameterExpression"""
-        return self._call(symengine.sin, op_code=_OPCode.SIN)
+        return self._call(sympy.sin, op_code=_OPCode.SIN)
 
     def cos(self):
         """Cosine of a ParameterExpression"""
-        return self._call(symengine.cos, op_code=_OPCode.COS)
+        return self._call(sympy.cos, op_code=_OPCode.COS)
 
     def tan(self):
         """Tangent of a ParameterExpression"""
-        return self._call(symengine.tan, op_code=_OPCode.TAN)
+        return self._call(sympy.tan, op_code=_OPCode.TAN)
 
     def arcsin(self):
         """Arcsin of a ParameterExpression"""
-        return self._call(symengine.asin, op_code=_OPCode.ASIN)
+        return self._call(sympy.asin, op_code=_OPCode.ASIN)
 
     def arccos(self):
         """Arccos of a ParameterExpression"""
-        return self._call(symengine.acos, op_code=_OPCode.ACOS)
+        return self._call(sympy.acos, op_code=_OPCode.ACOS)
 
     def arctan(self):
         """Arctan of a ParameterExpression"""
-        return self._call(symengine.atan, op_code=_OPCode.ATAN)
+        return self._call(sympy.atan, op_code=_OPCode.ATAN)
 
     def exp(self):
         """Exponential of a ParameterExpression"""
-        return self._call(symengine.exp, op_code=_OPCode.EXP)
+        return self._call(sympy.exp, op_code=_OPCode.EXP)
 
     def log(self):
         """Logarithm of a ParameterExpression"""
-        return self._call(symengine.log, op_code=_OPCode.LOG)
+        return self._call(sympy.log, op_code=_OPCode.LOG)
 
     def sign(self):
         """Sign of a ParameterExpression"""
-        return self._call(symengine.sign, op_code=_OPCode.SIGN)
+        return self._call(sympy.sign, op_code=_OPCode.SIGN)
 
     def __repr__(self):
         return f"{self.__class__.__name__}({str(self)})"
@@ -532,7 +532,7 @@ class ParameterExpression:
     def __str__(self):
         from sympy import sympify, sstr
 
-        if not isinstance(self._symbol_expr, symengine.Basic):
+        if not isinstance(self._symbol_expr, sympy.Basic):
             raise QiskitError("Invalid ParameterExpression")
 
         return sstr(sympify(self._symbol_expr), full_prec=False)
@@ -595,7 +595,7 @@ class ParameterExpression:
 
     def __abs__(self):
         """Absolute of a ParameterExpression"""
-        return self._call(symengine.Abs, _OPCode.ABS)
+        return self._call(sympy.Abs, _OPCode.ABS)
 
     def abs(self):
         """Absolute of a ParameterExpression"""
@@ -615,7 +615,7 @@ class ParameterExpression:
                 return False
             from sympy import sympify
 
-            if not isinstance(self._symbol_expr, symengine.Basic):
+            if not isinstance(self._symbol_expr, sympy.Basic):
                 raise QiskitError("Invalid ParameterExpression")
 
             return sympify(self._symbol_expr).equals(sympify(other._symbol_expr))
