@@ -326,10 +326,7 @@ def load(
     else:
         raise TypeError(f"Invalid payload format data kind '{type_key}'.")
 
-    if data.qpy_version < 10:
-        use_symengine = False
-    else:
-        use_symengine = data.symbolic_encoding == type_keys.SymExprEncoding.SYMENGINE
+    use_symengine = False
 
     programs = []
     for _ in range(data.num_programs):
