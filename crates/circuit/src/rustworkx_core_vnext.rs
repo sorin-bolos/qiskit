@@ -40,7 +40,6 @@ pub mod isomorphism {
         };
         use rustworkx_core::petgraph::{Directed, Incoming, Outgoing};
 
-        use rayon::slice::ParallelSliceMut;
 
         /// Returns `true` if we can map every element of `xs` to a unique
         /// element of `ys` while using `matcher` func to compare two elements.
@@ -318,7 +317,7 @@ pub mod isomorphism {
 
                 let mut sorted_nodes: Vec<usize> =
                     graph.node_identifiers().map(|node| node.index()).collect();
-                sorted_nodes.par_sort_by_key(|&node| (dout[node], din[node], Reverse(node)));
+                sorted_nodes.sort_by_key(|&node| (dout[node], din[node], Reverse(node)));
                 sorted_nodes.reverse();
 
                 for node in sorted_nodes {

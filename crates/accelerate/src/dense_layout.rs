@@ -17,7 +17,6 @@ use indexmap::IndexSet;
 use ndarray::prelude::*;
 use numpy::IntoPyArray;
 use numpy::PyReadonlyArray2;
-use rayon::prelude::*;
 
 use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
@@ -222,7 +221,7 @@ pub fn best_subset_inner(
     let best_result = (0..coupling_shape[0])
                         .map(map_fn)
                         .reduce(reduce_fn)
-                        .unwrap()
+                        .unwrap();
             
     let best_map: Vec<usize> = best_result.map;
     let mapping: HashMap<usize, usize> = best_map

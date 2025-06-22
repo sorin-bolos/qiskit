@@ -13,7 +13,6 @@ doctest = false
 workspace = true
 
 [dependencies]
-rayon.workspace = true
 ahash.workspace = true
 rustworkx-core.workspace = true
 bytemuck.workspace = true
@@ -33,15 +32,13 @@ features = ["num-complex"]
 
 [dependencies.ndarray]
 workspace = true
-features = ["rayon", "approx"]
+features = ["approx"]
 
 [dependencies.hashbrown]
 workspace = true
-features = ["rayon"]
 
 [dependencies.indexmap]
 workspace = true
-features = ["rayon"]
 
 [dependencies.smallvec]
 workspace = true
@@ -56,3 +53,4 @@ cache_pygates = []
 
 [dev-dependencies]
 pyo3 = { workspace = true, features = ["auto-initialize"] }
+rayon = "1.10"

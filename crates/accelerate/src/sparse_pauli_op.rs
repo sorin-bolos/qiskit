@@ -25,12 +25,10 @@ use indexmap::IndexMap;
 use ndarray::{s, ArrayView1, ArrayView2, Axis};
 use num_complex::Complex64;
 use num_traits::Zero;
-use rayon::prelude::*;
 use thiserror::Error;
 
 use qiskit_circuit::util::{c64, C_ZERO};
 
-use crate::rayon_ext::*;
 
 /// Find the unique elements of an array.
 ///

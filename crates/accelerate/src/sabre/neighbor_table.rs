@@ -14,7 +14,6 @@ use ndarray::prelude::*;
 use numpy::PyReadonlyArray2;
 use pyo3::prelude::*;
 use pyo3::types::PyList;
-use rayon::prelude::*;
 use rustworkx_core::petgraph::prelude::*;
 use smallvec::SmallVec;
 
