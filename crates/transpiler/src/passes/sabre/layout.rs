@@ -57,8 +57,7 @@ pub fn sabre_layout_and_routing(
     // Run a dense layout trial
     starting_layouts.push(compute_dense_starting_layout(
         dag.num_qubits,
-        &target,
-        false,
+        &target
     ));
     starting_layouts.push(
         (0..target.neighbors.num_qubits() as u32)
@@ -247,15 +246,10 @@ fn layout_trial(
 
 fn compute_dense_starting_layout(
     num_qubits: usize,
-    target: &RoutingTargetView,
-    run_in_parallel: bool,
+    target: &RoutingTargetView
 ) -> Vec<Option<u32>> {
     let mut adj_matrix = target.distance.to_owned();
-    if run_in_parallel {
-        adj_matrix.par_mapv_inplace(|x| if x == 1. { 1. } else { 0. });
-    } else {
-        adj_matrix.mapv_inplace(|x| if x == 1. { 1. } else { 0. });
-    }
+    adj_matrix.mapv_inplace(|x| if x == 1. { 1. } else { 0. });
     let [_rows, _cols, map] = best_subset(
         num_qubits,
         adj_matrix.view(),

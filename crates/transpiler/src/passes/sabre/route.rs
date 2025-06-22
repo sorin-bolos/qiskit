@@ -508,23 +508,11 @@ pub fn swap_map(
         .take(num_trials)
         .collect();
     if run_in_parallel {
-        seed_vec
-            .into_par_iter()
-            .enumerate()
-            .map(|(index, seed_trial)| {
-                (
-                    index,
-                    swap_map_trial(target, dag, heuristic, initial_layout, seed_trial),
-                )
-            })
-            .min_by_key(|(index, (result, _))| {
-                [
-                    result.map.map.values().map(|x| x.len()).sum::<usize>(),
-                    *index,
-                ]
-            })
+       seed_vec
+            .into_iter()
+            .map(|seed_trial| swap_map_trial(target, dag, heuristic, initial_layout, seed_trial))
+            .min_by_key(|(result, _)| result.map.map.values().map(|x| x.len()).sum::<usize>())
             .unwrap()
-            .1
     } else {
         seed_vec
             .into_iter()

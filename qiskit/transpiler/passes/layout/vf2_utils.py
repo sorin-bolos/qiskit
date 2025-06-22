@@ -138,7 +138,7 @@ def score_layout(
     if edge_list is None:
         edge_list = build_edge_list(im_graph)
     return vf2_layout.score_layout(
-        bit_list, edge_list, avg_error_map, nlayout, strict_direction, run_in_parallel
+        bit_list, edge_list, avg_error_map, nlayout, strict_direction
     )
 
 
