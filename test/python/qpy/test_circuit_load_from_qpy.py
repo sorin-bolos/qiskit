@@ -323,43 +323,6 @@ class TestVersionArg(QpyCircuitTestCase):
         self.assert_roundtrip_equal(qc)
 
 
-@ddt
-class TestUseSymengineFlag(QpyCircuitTestCase):
-    """Test that the symengine flag works correctly."""
-
-    @data(True, False)
-    def test_use_symengine_with_bool_like(self, use_symengine):
-        """Test that the use_symengine flag is set correctly with a bool-like input."""
-
-        class Booly:  # pylint: disable=missing-class-docstring,missing-function-docstring
-            def __init__(self, value):
-                self.value = value
-
-            def __bool__(self):
-                return self.value
-
-        theta = Parameter("theta")
-        two_theta = 2 * theta
-        qc = QuantumCircuit(1)
-        qc.rx(two_theta, 0)
-        qc.measure_all()
-        # Assert Roundtrip works
-        # `use_symengine` is near-completely ignored with QPY versions 13+; it doesn't actually
-        # matter if we _have_ symengine installed or not, because those QPYs don't ever use it
-        # (except for setting a single byte in the header, which is promptly ignored).
-        self.assert_roundtrip_equal(qc, use_symengine=Booly(use_symengine), version=13)
-        # Also check the qpy symbolic expression encoding is correct in the
-        # payload
-        with io.BytesIO() as file_obj:
-            dump(qc, file_obj, use_symengine=Booly(use_symengine))
-            file_obj.seek(0)
-            header_data = FILE_HEADER_V10._make(
-                struct.unpack(
-                    FILE_HEADER_V10_PACK,
-                    file_obj.read(FILE_HEADER_V10_SIZE),
-                )
-            )
-            self.assertEqual(header_data.symbolic_encoding, b"e" if use_symengine else b"p")
 
 
 class TestSymbolExpr(QpyCircuitTestCase):

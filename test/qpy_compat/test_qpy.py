@@ -479,7 +479,7 @@ def generate_schedule_blocks(current_version):
             builder.acquire(1000, channels.AcquireChannel(0), channels.MemorySlot(0))
     schedule_blocks.append(block)
     # Raw symbolic pulse
-    import symengine as sym
+    import sympy as sym
 
     duration, amp, t = sym.symbols("duration amp t")  # pylint: disable=invalid-name
     expr = amp * sym.sin(2 * sym.pi * t / duration)
