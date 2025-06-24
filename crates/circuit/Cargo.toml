@@ -35,10 +35,12 @@ features = ["num-complex"]
 
 [dependencies.ndarray]
 workspace = true
-features = ["approx"]
+default-features = false
+features = ["std", "approx"]
 
 [dependencies.hashbrown]
 workspace = true
+default-features = false
 
 [dependencies.indexmap]
 workspace = true

@@ -35,7 +35,8 @@ features = ["hashbrown", "num-complex", "num-bigint", "smallvec"]
 
 [dependencies.ndarray]
 workspace = true
-features = ["approx"]
+default-features = false
+features = ["std", "approx"]
 
 [dependencies.approx]
 workspace = true
@@ -44,6 +45,7 @@ features = ["num-complex"]
 [dependencies.hashbrown]
 workspace = true
 features = ["serde"]
+default-features = false
 
 [dependencies.pulp]
 version = "0.21.5"
