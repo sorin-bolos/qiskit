@@ -22,7 +22,7 @@ num-traits = "0.2"
 num-complex.workspace = true
 rustworkx-core.workspace = true
 num-bigint.workspace = true
-faer = "0.19.4"
+faer = { version = "0.19.4", default-features = false, features = ["std"] }
 itertools.workspace = true
 qiskit-circuit.workspace = true
 thiserror.workspace = true
@@ -41,7 +41,8 @@ features = ["hashbrown", "indexmap", "num-complex", "num-bigint", "smallvec"]
 
 [dependencies.ndarray]
 workspace = true
-features = ["approx"]
+default-features = false
+features = ["std", "approx"]
 
 [dependencies.approx]
 workspace = true
@@ -49,6 +50,7 @@ features = ["num-complex"]
 
 [dependencies.hashbrown]
 workspace = true
+default-features = false
 
 [dependencies.indexmap]
 workspace = true
