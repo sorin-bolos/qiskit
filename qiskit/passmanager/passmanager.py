@@ -19,8 +19,6 @@ from collections.abc import Callable, Iterable
 from itertools import chain
 from typing import Any
 
-import dill
-
 from .base_tasks import Task, PassManagerIR
 from .exceptions import PassManagerError
 from .flow_controllers import FlowControllerLinear
@@ -310,24 +308,3 @@ def _run_workflow(
 
     return out_program
 
-
-def _run_workflow_in_new_process(
-    program: Any,
-    pass_manager_bin: bytes,
-    *,
-    initial_property_set: dict[str, object] | None,
-) -> Any:
-    """Run single program optimization in new process.
-
-    Args:
-        program: Arbitrary program to optimize.
-        pass_manager_bin: Binary of the pass manager with scheduled passes.
-
-    Returns:
-          Optimized program.
-    """
-    return _run_workflow(
-        program=program,
-        pass_manager=dill.loads(pass_manager_bin),
-        initial_property_set=initial_property_set,
-    )
