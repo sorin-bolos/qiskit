@@ -14,10 +14,9 @@ workspace = true
 
 [dependencies]
 num-bigint.workspace = true
+pyo3.workspace = true
+qiskit-circuit.workspace = true
 
 [dependencies.hashbrown]
 workspace = true
 default-features = false
-
-pyo3.workspace = true
-qiskit-circuit.workspace = true

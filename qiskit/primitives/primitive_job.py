@@ -14,12 +14,49 @@ Job for the reference implementations of Primitives V1 and V2.
 """
 
 import uuid
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import Future
 
 from qiskit.providers import JobError, JobStatus
 from qiskit.providers.jobstatus import JOB_FINAL_STATES
 
 from .base.base_primitive_job import BasePrimitiveJob, ResultT
+
+
+class _SynchronousFuture:
+    """A Future-like object that executes synchronously."""
+    
+    def __init__(self, func, *args, **kwargs):
+        self._result = None
+        self._exception = None
+        self._done = False
+        self._cancelled = False
+        
+        try:
+            self._result = func(*args, **kwargs)
+            self._done = True
+        except Exception as e:
+            self._exception = e
+            self._done = True
+    
+    def result(self):
+        if self._exception:
+            raise self._exception
+        return self._result
+    
+    def done(self):
+        return self._done
+    
+    def running(self):
+        return False  # Always False since we execute synchronously
+    
+    def cancelled(self):
+        return self._cancelled
+    
+    def cancel(self):
+        return False  # Can't cancel since execution is immediate
+    
+    def exception(self):
+        return self._exception
 
 
 class PrimitiveJob(BasePrimitiveJob[ResultT, JobStatus]):
@@ -44,9 +81,7 @@ class PrimitiveJob(BasePrimitiveJob[ResultT, JobStatus]):
         if self._future is not None:
             raise JobError("Primitive job has been submitted already.")
 
-        executor = ThreadPoolExecutor(max_workers=1)  # pylint: disable=consider-using-with
-        self._future = executor.submit(self._function, *self._args, **self._kwargs)
-        executor.shutdown(wait=False)
+        self._future = _SynchronousFuture(self._function, *self._args, **self._kwargs)
 
     def __getstate__(self):
         _ = self.result()
