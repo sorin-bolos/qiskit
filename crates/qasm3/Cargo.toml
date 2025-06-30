@@ -14,13 +14,16 @@ workspace = true
 
 
 [dependencies]
-indexmap.workspace = true
 oq3_semantics = "0.7.0"
 ahash.workspace = true
 
 [dependencies.hashbrown]
 workspace = true
 default-features = false
+
+[dependencies.indexmap]
+workspace = true
+default-features = false 
 
 [dependencies.pyo3]
 workspace = true
