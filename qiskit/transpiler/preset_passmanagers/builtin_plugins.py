@@ -1039,9 +1039,10 @@ class SabreLayoutPassManager(PassManagerStagePlugin):
 
 
 def _get_trial_count(default_trials=1):
-    if CONFIG.get("sabre_all_threads", None) or os.getenv("QISKIT_SABRE_ALL_THREADS"):
-        return max(default_num_processes(), default_trials)
-    return default_trials
+    return 1
+    # if CONFIG.get("sabre_all_threads", None) or os.getenv("QISKIT_SABRE_ALL_THREADS"):
+    #     return max(default_num_processes(), default_trials)
+    # return default_trials
 
 
 class CliffordTOptimizationPassManager(PassManagerStagePlugin):

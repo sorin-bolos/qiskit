@@ -1397,7 +1397,7 @@ impl PyPauliLindbladMap {
         seed: Option<u64>,
     ) -> PyResult<Bound<'py, PyTuple>> {
         let inner = self.inner.read().map_err(|_| InnerReadError)?;
-        let (signs, paulis) = py.allow_threads(|| inner.sample(num_samples, seed));
+        let (signs, paulis) = inner.sample(num_samples, seed);
 
         let signs = PyArray1::from_vec(py, signs);
         let paulis = paulis.into_pyobject(py).unwrap();
@@ -1449,7 +1449,7 @@ impl PyPauliLindbladMap {
             }
         }
 
-        let (_, paulis) = py.allow_threads(|| inner.sample(num_samples, seed));
+        let (_, paulis) = inner.sample(num_samples, seed);
 
         paulis.into_pyobject(py)
     }

@@ -406,7 +406,7 @@ pub fn decompose_dense(
     tolerance: f64,
 ) -> PyResult<ZXPaulis> {
     let array_view = operator.as_array();
-    let out = py.allow_threads(|| decompose_dense_inner(array_view, tolerance))?;
+    let out = decompose_dense_inner(array_view, tolerance)?;
     Ok(ZXPaulis {
         z: PyArray1::from_vec(py, out.z)
             .reshape([out.phases.len(), out.num_qubits])?

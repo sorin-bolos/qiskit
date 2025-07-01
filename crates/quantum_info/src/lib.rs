@@ -17,7 +17,6 @@ pub mod sparse_pauli_op;
 pub mod unitary_compose;
 pub mod versor_u2;
 
-mod rayon_ext;
 #[cfg(test)]
 mod test;
 

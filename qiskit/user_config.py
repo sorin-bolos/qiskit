@@ -169,12 +169,12 @@ class UserConfig:
                     )
                 self.settings["num_processes"] = num_processes
 
-            # Parse sabre_all_threads
-            sabre_all_threads = self.config_parser.getboolean(
-                "default", "sabre_all_threads", fallback=None
-            )
-            if sabre_all_threads is not None:
-                self.settings["sabre_all_threads"] = sabre_all_threads
+            # # Parse sabre_all_threads
+            # sabre_all_threads = self.config_parser.getboolean(
+            #     "default", "sabre_all_threads", fallback=None
+            # )
+            # if sabre_all_threads is not None:
+            #     self.settings["sabre_all_threads"] = sabre_all_threads
 
 
 def set_config(key, value, section=None, file_path=None):

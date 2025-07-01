@@ -13,7 +13,6 @@ doctest = false
 workspace = true
 
 [dependencies]
-rayon.workspace = true
 numpy.workspace = true
 ahash.workspace = true
 itertools.workspace = true
@@ -41,7 +40,8 @@ features = ["hashbrown", "indexmap", "num-complex", "num-bigint", "smallvec"]
 
 [dependencies.ndarray]
 workspace = true
-features = ["rayon", "approx"]
+features = ["approx"]
+default-features = false
 
 [dependencies.approx]
 workspace = true
@@ -49,11 +49,11 @@ features = ["num-complex"]
 
 [dependencies.hashbrown]
 workspace = true
-features = ["rayon"]
+default-features = false
 
 [dependencies.indexmap]
 workspace = true
-features = ["rayon"]
+default-features = false
 
 [dev-dependencies]
 pyo3 = { workspace = true, features = ["auto-initialize"] }

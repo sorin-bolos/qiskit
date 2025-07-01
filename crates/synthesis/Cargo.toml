@@ -22,12 +22,12 @@ nalgebra.workspace = true
 ahash.workspace = true
 itertools.workspace = true
 numpy.workspace = true
-rayon.workspace = true
 num-traits.workspace = true
 rand.workspace = true
 rand_pcg.workspace = true
 rand_distr.workspace = true
-faer = "0.19.4"
+rayon.workspace = true
+faer = { version = "0.19.4", default-features = false, features = ["std"] }
 rustworkx-core.workspace = true
 rustiq-core = "0.0.11"
 rstar = "0.12.2"
@@ -37,6 +37,7 @@ thiserror.workspace = true
 [dependencies.faer-ext]
 version = "0.3.0"
 features = ["ndarray"]
+default-features = false
 
 [dependencies.smallvec]
 workspace = true
@@ -48,7 +49,8 @@ features = ["hashbrown", "indexmap", "num-complex", "num-bigint", "smallvec"]
 
 [dependencies.ndarray]
 workspace = true
-features = ["rayon", "approx"]
+features = ["approx"]
+default-features = false
 
 [dependencies.approx]
 workspace = true
@@ -56,11 +58,12 @@ features = ["num-complex"]
 
 [dependencies.hashbrown]
 workspace = true
-features = ["rayon", "serde"]
+features = ["serde"]
+default-features = false
 
 [dependencies.indexmap]
 workspace = true
-features = ["rayon"]
+default-features = false
 
 [dev-dependencies]
 pyo3 = { workspace = true, features = ["auto-initialize"] }

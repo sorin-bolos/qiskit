@@ -18,7 +18,6 @@ nalgebra.workspace = true
 itertools.workspace = true
 rustworkx-core.workspace = true
 thiserror.workspace = true
-rayon.workspace = true
 bytemuck.workspace = true
 ahash.workspace = true
 ndarray-einsum = "0.8.0"
@@ -28,7 +27,8 @@ rand_distr.workspace = true
 
 [dependencies.ndarray]
 workspace = true
-features = ["rayon", "approx"]
+features = ["approx"]
+default-features = false
 
 [dependencies.approx]
 workspace = true
@@ -36,11 +36,11 @@ features = ["num-complex"]
 
 [dependencies.hashbrown]
 workspace = true
-features = ["rayon"]
+default-features = false
 
 [dependencies.indexmap]
 workspace = true
-features = ["rayon"]
+default-features = false
 
 [dependencies.pyo3]
 workspace = true
