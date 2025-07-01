@@ -26,12 +26,11 @@ num-traits.workspace = true
 rand.workspace = true
 rand_pcg.workspace = true
 rand_distr.workspace = true
-rayon.workspace = true
 faer = { version = "0.19.4", default-features = false, features = ["std"] }
 rustworkx-core.workspace = true
 rustiq-core = "0.0.11"
 rstar = "0.12.2"
-serde = "1.0.219"
+serde = { version = "1.0.219", features = ["derive"] }
 thiserror.workspace = true
 
 [dependencies.faer-ext]
